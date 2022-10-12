@@ -2,9 +2,11 @@ drop table days;
 drop table appoinments;
 
 CREATE TABLE days
-(id serial
-name text)
+(id serial primary key,
+name text);
 
 CREATE TABLE appoinments
-(id serial,
-time text)
+(id serial primary key,
+time text,
+dayid INTEGER references days(id)
+);
