@@ -14,8 +14,8 @@ app.get("/days", (req, res) => {
   pool
     .query("SELECT * FROM days")
     .then((res) => res.rows)
-    .then((students) => {
-      console.log("days", name);
+    .then((days) => {
+      console.log("days", days);
     })
     .catch((err) => {
       console.log("err", err);
