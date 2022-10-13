@@ -25,4 +25,16 @@ app.get("/days", (req, res) => {
     });
 });
 
+app.get("/spots/:day", (req, res) => {
+  const pool = new Pool({
+    user: "viniguimaraes",
+    host: "localhost",
+    database: "finalproject",
+    password: "",
+    port: 5432,
+  });
+
+  const day = req.params.day;
+});
+
 app.listen(port, () => console.log(`Server is running on port ${port}`));
