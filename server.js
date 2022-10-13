@@ -25,4 +25,26 @@ app.get("/days", (req, res) => {
     });
 });
 
+app.get("/interviewer", (req, res) => {
+  const pool = new Pool({
+    user: "postgres",
+    host: "localhost",
+    database: "finalproject",
+    password: "",
+    port: 5432,
+  });
+  pool
+    .query("SELECT * FROM interviewer")
+    .then((res) => res.rows)
+    .then((interviewer) => {
+      console.log("interviewer", interviewer);
+    })
+    .catch((err) => {
+      console.log("err", err);
+    })
+    .finally(() => {
+      pool.end();
+    });
+});
+
 app.listen(port, () => console.log(`Server is running on port ${port}`));
