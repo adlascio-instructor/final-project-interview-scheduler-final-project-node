@@ -1,0 +1,1 @@
+INSERT INTO interview (student, interviewer_id, appointments_id) VALUE ("test", 1, 1)
