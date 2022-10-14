@@ -44,7 +44,6 @@ app.get("/spots", (req, res) => {
     )
     .then((res) => res.rows)
     .then((days) => {
-      console.log("days", days);
       const obj = {};
 
       days.forEach((element) => {
