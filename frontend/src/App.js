@@ -8,7 +8,7 @@ import daysData from "./components/__mocks__/days.json";
 import appointmentsData from "./components/__mocks__/appointments.json";
 
 export default function Application() {
-  const [day, setDay] = useState("Monday");
+  const [day, setDay] = useState("Tuesday");
   const [days, setDays] = useState(daysData);
   const [appointments, setAppointments] = useState(appointmentsData);
   function bookInterview(id, interview) {
@@ -85,9 +85,10 @@ export default function Application() {
               bookInterview(appointment.id, interview)
             }
             cancelInterview={cancelInterview}
+            day={day}
           />
         ))}
-        <Appointment key="last" time="5pm" />
+        <Appointment key="last" time="5pm" day={day} />
       </section>
     </main>
   );
