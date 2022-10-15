@@ -44,22 +44,4 @@ app.get("/interviewer", (req, res) => {
     });
 });
 
-app.get("/avaiable_interviewers", (req, res) => {
-  const pool = new Pool(dbCredentials);
-  pool
-    .query(
-      "SELECT name FROM interviewer JOIN interviewer ON (id = interviewer_id) "
-    )
-    .then((res) => res.rows)
-    .then((interviewer) => {
-      console.log("interviewer", interviewer);
-    })
-    .catch((err) => {
-      console.log("err", err);
-    })
-    .finally(() => {
-      pool.end();
-    });
-});
-
 app.listen(port, () => console.log(`Server is running on port ${port}`));
