@@ -12,6 +12,11 @@ const dbCredentials = {
   port: process.env.DB_PORT,
 };
 
+const cors = require('cors');
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.get("/days", (req, res) => {
   const pool = new Pool(dbCredentials);
   pool
@@ -79,4 +84,15 @@ app.get("/interviewer", (req, res) => {
     });
 });
 
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+const {listInterviewersDay,insertInterview, deleteInterview, updateInterview} = require("./controllers/interviewers");
+
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/interviewers/:day", listInterviewersDay);
+app.post("/insertInterview",insertInterview);
+app.post("/updateInterview",updateInterview);
+app.post("/deleteInterview",deleteInterview);
+
+
+
+app.listen(port, () => console.log(`Server is running on port ${port}`))
