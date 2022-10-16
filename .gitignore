@@ -1,1 +1,7 @@
 node_modules
+.env
+*.sql
+seeds/days.sql
+seeds/interviewer.sql
+seeds/avaiable_interviewer.sql
+seeds/appoinments.sql

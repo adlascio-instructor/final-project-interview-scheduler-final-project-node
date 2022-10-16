@@ -1,20 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 import "./App.scss";
 
 import DayList from "./components/DayList";
 import Appointment from "./components/Appointment";
-import daysData from "./components/__mocks__/days.json";
+// import daysData from "./components/__mocks__/days.json";
 import appointmentsData from "./components/__mocks__/appointments.json";
 
 export default function Application() {
-  const [day, setDay] = useState("Tuesday");
-  const [days, setDays] = useState(daysData);
+  const [day, setDay] = useState("monday");
+  const [days, setDays] = useState({});
   const [appointments, setAppointments] = useState(appointmentsData);
+
+  useEffect(() => {
+    axios.get("/spots").then((res) => {
+      setDays(res.data);
+    });
+  },[day]);
+
   function bookInterview(id, interview) {
-    console.log(id, interview);
+    console.log("ALTERANDO"); 
+    console.log("ID:", id);
+    console.log(interview);
+
+    // interview.id = null;
+    // axios.post('http://localhost:8000/postInterview/',appointments[id]);
+    
     const isEdit = appointments[id].interview;
+
     setAppointments((prev) => {
+      
       const appointment = {
         ...prev[id],
         interview: { ...interview },
@@ -25,6 +41,22 @@ export default function Application() {
       };
       return appointments;
     });
+
+    // INSERT and EDIT - DB
+    console.log("appointment",appointments[id]);
+    if (appointments[id].interview) { // UPDATE
+      console.log("EDIT");
+      
+
+    } else { // INSERT
+      const appointment = appointments[id];
+      appointment.interview = interview;
+      axios.post('http://localhost:8000/insertInterview/',appointment)
+        .then((response) => appointments[id] = response.data)
+    }
+    console.log("appointments novo",appointments);
+    
+    
     if (!isEdit) {
       setDays((prev) => {
         const updatedDay = {
@@ -38,8 +70,16 @@ export default function Application() {
         return days;
       });
     }
+
   }
   function cancelInterview(id) {
+
+    // DELETE from BD
+    console.log("ID",id);
+    console.log("APPOINTMENT",appointments[id]);
+    axios.post('http://localhost:8000/deleteInterview/',appointments[id]);
+    /////
+
     setAppointments((prev) => {
       const updatedAppointment = {
         ...prev[id],
@@ -62,6 +102,7 @@ export default function Application() {
       };
       return days;
     });
+
   }
   return (
     <main className="layout">
