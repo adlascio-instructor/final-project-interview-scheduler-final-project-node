@@ -13,7 +13,15 @@ const dbCredentials = {
   port: process.env.DB_PORT,
 };
 
+<<<<<<< HEAD
 console.log(dbCredentials);
+=======
+const cors = require('cors');
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+>>>>>>> 26c65ffec22304bc7ea7240438077bcb0ea1193b
 app.get("/days", (req, res) => {
   const pool = new Pool(dbCredentials);
   pool
@@ -81,6 +89,7 @@ app.get("/interviewer", (req, res) => {
     });
 });
 
+<<<<<<< HEAD
 app.get("/interviews/:day", (req, res) => {
   const day = req.params.day;
   const pool = new Pool(dbCredentials);
@@ -129,3 +138,17 @@ app.get("/interviews/:day", (req, res) => {
 });
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
+=======
+const {listInterviewersDay,insertInterview, deleteInterview, updateInterview} = require("./controllers/interviewers");
+
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/interviewers/:day", listInterviewersDay);
+app.post("/insertInterview",insertInterview);
+app.post("/updateInterview",updateInterview);
+app.post("/deleteInterview",deleteInterview);
+
+
+
+app.listen(port, () => console.log(`Server is running on port ${port}`))
+>>>>>>> 26c65ffec22304bc7ea7240438077bcb0ea1193b
