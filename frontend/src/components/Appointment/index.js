@@ -4,6 +4,8 @@ import Show from "./Show";
 import Empty from "./Empty";
 import Form from "./Form";
 import Confirm from "./Confirm";
+import axios from "axios";
+
 
 import "./styles.scss";
 
@@ -11,21 +13,32 @@ const Appointment = (props) => {
   const [add, setAdd] = React.useState(false);
   const [edit, setEdit] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const [interviewers, setInterviewers] = React.useState(null);
+
   function save(name, interviewer) {
     const interview = {
       student: name,
       interviewer,
     };
     setEdit(false);
+    console.log("BLABLABLA",interview);
+    console.log("PROPSasdfsdf",props);
+    console.log("ADD", add);
+    console.log("EDIT", edit);
+    if (edit) {
+      interview.appointment_id = props.id;
+      axios.post('http://localhost:8000/updateInterview/',interview)
+          .then((response) => console.log(response));
+    }
     props.bookInterview(interview);
   }
-  const interviewers = [
-    { id: 1, name: "Sylvia Palmer", avatar: "https://i.imgur.com/LpaY82x.png" },
-    { id: 2, name: "Tori Malcolm", avatar: "https://i.imgur.com/Nmx0Qxo.png" },
-    { id: 3, name: "Mildred Nazir", avatar: "https://i.imgur.com/T2WwVfS.png" },
-    { id: 4, name: "Cohana Roy", avatar: "https://i.imgur.com/FK8V841.jpg" },
-    { id: 5, name: "Sven Jones", avatar: "https://i.imgur.com/twYrpay.jpg" },
-  ];
+   
+  React.useEffect(() => {
+    console.log("props2",props);
+    let test = axios.get("http://localhost:8000/interviewers/" + props.day)
+      .then(response => { setInterviewers(response.data) });
+  },[props.day]);
+
   return (
     <article className="appointment">
       <Header time={props.time} />
@@ -36,6 +49,7 @@ const Appointment = (props) => {
             onCancel={() => setIsDeleting(false)}
             onConfirm={() => {
               props.cancelInterview(props.id);
+              console.log("DELETE");
               setIsDeleting(false);
             }}
           />
