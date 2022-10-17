@@ -81,28 +81,51 @@ app.get("/interviewer", (req, res) => {
     });
 });
 
-// app.get("/avaiable_interviewers", (req, res) => {
-//   const pool = new Pool(dbCredentials);
-//   pool
-//     .query(
-//       `SELECT id FROM available_interviewer
-//        JOIN days
-//        ON day_id = days.id
-//        JOIN interviewer
-//        ON interviewer_id = interviewer.id
-//        ;
-//     `
-//     )
-//     .then((res) => res.rows)
-//     .then((avaiable_interviewers) => {
-//       console.log("avaiable_interviewers", avaiable_interviewers);
-//     })
-//     .catch((err) => {
-//       console.log("err", err);
-//     })
-//     .finally(() => {
-//       pool.end();
-//     });
-// });
+app.get("/interviews/:day", (req, res) => {
+  const day = req.params.day;
+  const pool = new Pool(dbCredentials);
+  pool
+    .query(
+      `SELECT appoinments.id, time, interview.student, interviewer.id AS interviewer_id, interviewer.name, interviewer.avatar FROM appoinments
+      LEFT JOIN interview
+      ON appointments_id = appoinments.id 
+      LEFT JOIN interviewer 
+      ON interviewer_id = interviewer.id
+      JOIN days
+      ON dayid = days.id
+      WHERE days.name = $1
+      ORDER BY appoinments.id
+      ; 
+      `,
+      [day]
+    )
+    .then((res) => res.rows)
+    .then((interviews) => {
+      const obj = {};
+
+      interviews.forEach((element) => {
+        obj[element.id] = {
+          id: element.id,
+          time: element.time,
+          interview: {
+            student: element.student,
+            interviewer: {
+              id: element.interviewer_id,
+              name: element.name,
+              avatar: element.avatar,
+            },
+          },
+        };
+      });
+      console.log("oi", obj);
+      res.json(obj);
+    })
+    .catch((err) => {
+      console.log("err", err);
+    })
+    .finally(() => {
+      pool.end();
+    });
+});
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
