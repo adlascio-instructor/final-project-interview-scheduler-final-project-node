@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const port = 8000;
+require("dotenv").config();
 const { Pool } = require("pg");
 require("dotenv").config();
 
@@ -12,11 +13,15 @@ const dbCredentials = {
   port: process.env.DB_PORT,
 };
 
+<<<<<<< HEAD
+console.log(dbCredentials);
+=======
 const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+>>>>>>> 26c65ffec22304bc7ea7240438077bcb0ea1193b
 app.get("/days", (req, res) => {
   const pool = new Pool(dbCredentials);
   pool
@@ -84,6 +89,56 @@ app.get("/interviewer", (req, res) => {
     });
 });
 
+<<<<<<< HEAD
+app.get("/interviews/:day", (req, res) => {
+  const day = req.params.day;
+  const pool = new Pool(dbCredentials);
+  pool
+    .query(
+      `SELECT appoinments.id, time, interview.student, interviewer.id AS interviewer_id, interviewer.name, interviewer.avatar FROM appoinments
+      LEFT JOIN interview
+      ON appointments_id = appoinments.id 
+      LEFT JOIN interviewer 
+      ON interviewer_id = interviewer.id
+      JOIN days
+      ON dayid = days.id
+      WHERE days.name = $1
+      ORDER BY appoinments.id
+      ; 
+      `,
+      [day]
+    )
+    .then((res) => res.rows)
+    .then((interviews) => {
+      const obj = {};
+
+      interviews.forEach((element) => {
+        obj[element.id] = {
+          id: element.id,
+          time: element.time,
+          interview: {
+            student: element.student,
+            interviewer: {
+              id: element.interviewer_id,
+              name: element.name,
+              avatar: element.avatar,
+            },
+          },
+        };
+      });
+      console.log("oi", obj);
+      res.json(obj);
+    })
+    .catch((err) => {
+      console.log("err", err);
+    })
+    .finally(() => {
+      pool.end();
+    });
+});
+
+app.listen(port, () => console.log(`Server is running on port ${port}`));
+=======
 const {listInterviewersDay,insertInterview, deleteInterview, updateInterview} = require("./controllers/interviewers");
 
 app.use(express.urlencoded({ extended: true }));
@@ -96,3 +151,4 @@ app.post("/deleteInterview",deleteInterview);
 
 
 app.listen(port, () => console.log(`Server is running on port ${port}`))
+>>>>>>> 26c65ffec22304bc7ea7240438077bcb0ea1193b
