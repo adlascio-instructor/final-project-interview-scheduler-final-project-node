@@ -11,13 +11,21 @@ import appointmentsData from "./components/__mocks__/appointments.json";
 export default function Application() {
   const [day, setDay] = useState("monday");
   const [days, setDays] = useState({});
-  const [appointments, setAppointments] = useState(appointmentsData);
+  const [appointments, setAppointments] = useState({});
 
   useEffect(() => {
-    axios.get("/spots").then((res) => {
+    axios.get("http://localhost:8000/spots").then((res) => {
       setDays(res.data);
     });
   },[day]);
+
+  useEffect(() => {
+    axios.get("http://localhost:8000/interviews/" + day).then((res) => {
+      setAppointments(res.data);
+    });
+  },[appointments]);
+
+  
 
   function bookInterview(id, interview) {
     console.log("ALTERANDO"); 
@@ -42,13 +50,9 @@ export default function Application() {
       return appointments;
     });
 
-    // INSERT and EDIT - DB
-    console.log("appointment",appointments[id]);
-    if (appointments[id].interview) { // UPDATE
-      console.log("EDIT");
-      
-
-    } else { // INSERT
+    // INSERT
+    console.log("appointmenttreterteryttreterwteryrefdghfh",appointments[id]);
+    if (!appointments[id].interview) {
       const appointment = appointments[id];
       appointment.interview = interview;
       axios.post('http://localhost:8000/insertInterview/',appointment)

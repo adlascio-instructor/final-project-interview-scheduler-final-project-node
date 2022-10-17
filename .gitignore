@@ -5,3 +5,4 @@ seeds/days.sql
 seeds/interviewer.sql
 seeds/avaiable_interviewer.sql
 seeds/appoinments.sql
+.env

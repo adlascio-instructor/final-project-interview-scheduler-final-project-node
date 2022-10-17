@@ -34,7 +34,7 @@ const Appointment = (props) => {
   }
    
   React.useEffect(() => {
-    console.log("props2",props);
+    console.log("props2",props.day);
     let test = axios.get("http://localhost:8000/interviewers/" + props.day)
       .then(response => { setInterviewers(response.data) });
   },[props.day]);
