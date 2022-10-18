@@ -1,39 +1,54 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-
+import io from 'socket.io-client'
 import "./App.scss";
 
 import DayList from "./components/DayList";
 import Appointment from "./components/Appointment";
 // import daysData from "./components/__mocks__/days.json";
-import appointmentsData from "./components/__mocks__/appointments.json";
+// import appointmentsData from "./components/__mocks__/appointments.json";
+
+const socket = io.connect("http://localhost:8000");
 
 export default function Application() {
   const [day, setDay] = useState("monday");
   const [days, setDays] = useState({});
   const [appointments, setAppointments] = useState({});
+  const [appoinmentsRec, setAppointmentsRec] = useState({});
 
   useEffect(() => {
     axios.get("http://localhost:8000/spots").then((res) => {
       setDays(res.data);
     });
-  },[day]);
+  },[]);
 
   useEffect(() => {
     axios.get("http://localhost:8000/interviews/" + day).then((res) => {
       setAppointments(res.data);
     });
-  },[appointments]);
+  },[day]);
 
+  useEffect(() => {
+    const key = Object.keys(appoinmentsRec)[0];
+    if (key) {
+      if (appointments[key] && JSON.stringify(appoinmentsRec) != JSON.stringify(appointments)) {
+        setAppointments(appoinmentsRec);
+      }
+    }
+  }, [appoinmentsRec]);
   
+  useEffect(() => {
+    socket.on("receive_message", (data) => {
+      setDays(data.days);
+      setAppointmentsRec(data.appointments);
+    })
+  }, [socket]);
+  
+  useEffect(() => {
+    socket.emit("send_message",{day,days,appointments});
+  }, [appointments]);
 
   function bookInterview(id, interview) {
-    console.log("ALTERANDO"); 
-    console.log("ID:", id);
-    console.log(interview);
-
-    // interview.id = null;
-    // axios.post('http://localhost:8000/postInterview/',appointments[id]);
     
     const isEdit = appointments[id].interview;
 
@@ -51,14 +66,12 @@ export default function Application() {
     });
 
     // INSERT
-    console.log("appointmenttreterteryttreterwteryrefdghfh",appointments[id]);
     if (!appointments[id].interview) {
       const appointment = appointments[id];
       appointment.interview = interview;
       axios.post('http://localhost:8000/insertInterview/',appointment)
         .then((response) => appointments[id] = response.data)
     }
-    console.log("appointments novo",appointments);
     
     
     if (!isEdit) {
@@ -74,13 +87,10 @@ export default function Application() {
         return days;
       });
     }
-
   }
   function cancelInterview(id) {
 
     // DELETE from BD
-    console.log("ID",id);
-    console.log("APPOINTMENT",appointments[id]);
     axios.post('http://localhost:8000/deleteInterview/',appointments[id]);
     /////
 

@@ -13,7 +13,6 @@ const dbCredentials = {
 
 
 const listInterviewersDay = (req, res) => {
-   console.log(req.params.day);
 
    const pool = new Pool(dbCredentials);
    pool
@@ -22,7 +21,7 @@ const listInterviewersDay = (req, res) => {
          [req.params.day]
       )
       .then((result) => result.rows)
-      .then((interviewer) => { console.log(interviewer); res.json(interviewer);  }) 
+      .then((interviewer) => { res.json(interviewer);  }) 
       .catch((err) => console.log("err",err))
       .finally(() => pool.end());
 
@@ -47,7 +46,6 @@ const insertInterview = (req, res) => {
 }
 
 const updateInterview = (req,res) => {
-   console.log("UPDATE",req.body);
    const pool = new Pool(dbCredentials);
    pool
       .query(
@@ -61,7 +59,6 @@ const updateInterview = (req,res) => {
 }
 
 const deleteInterview = (req, res) => {
-   console.log("DELETE", req.body);
    const pool = new Pool(dbCredentials);
    pool
       .query(

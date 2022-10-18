@@ -17,14 +17,35 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// SOCKET --->
+const http = require('http');
+const {Server} = require('socket.io');
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    method: ["GET","{PST"],
+  }
+});
+
+io.on("connection", (socket) => {
+  console.log(`User connected: ${socket.id}`);
+
+  socket.on("send_message", (data) => {
+    socket.broadcast.emit("receive_message",data);
+  })
+
+})
+// SOCKET <---
+
+
+
 app.get("/days", (req, res) => {
   const pool = new Pool(dbCredentials);
   pool
     .query("SELECT * FROM days")
     .then((res) => res.rows)
-    .then((days) => {
-      console.log("days", days);
-    })
     .catch((err) => {
       console.log("err", err);
     })
@@ -34,7 +55,6 @@ app.get("/days", (req, res) => {
 });
 
 app.get("/spots", (req, res) => {
-  console.log("credentials", dbCredentials);
   const pool = new Pool(dbCredentials);
   pool
     .query(
@@ -73,9 +93,6 @@ app.get("/interviewer", (req, res) => {
   pool
     .query("SELECT * FROM interviewer")
     .then((res) => res.rows)
-    .then((interviewer) => {
-      console.log("interviewer", interviewer);
-    })
     .catch((err) => {
       console.log("err", err);
     })
@@ -122,7 +139,6 @@ app.get("/interviews/:day", (req, res) => {
             };
         };
       });
-      console.log("oi", obj);
       res.json(obj);
     })
     .catch((err) => {
@@ -142,4 +158,5 @@ app.post("/deleteInterview",deleteInterview);
 
 
 
-app.listen(port, () => console.log(`Server is running on port ${port}`))
+// app.listen(port, () => console.log(`Server is running on port ${port}`))
+server.listen(port, () => console.log(`Server is running on port ${port}`));

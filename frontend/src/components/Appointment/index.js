@@ -21,20 +21,14 @@ const Appointment = (props) => {
       interviewer,
     };
     setEdit(false);
-    console.log("BLABLABLA",interview);
-    console.log("PROPSasdfsdf",props);
-    console.log("ADD", add);
-    console.log("EDIT", edit);
     if (edit) {
       interview.appointment_id = props.id;
       axios.post('http://localhost:8000/updateInterview/',interview)
-          .then((response) => console.log(response));
     }
     props.bookInterview(interview);
   }
    
   React.useEffect(() => {
-    console.log("props2",props.day);
     let test = axios.get("http://localhost:8000/interviewers/" + props.day)
       .then(response => { setInterviewers(response.data) });
   },[props.day]);
@@ -49,7 +43,6 @@ const Appointment = (props) => {
             onCancel={() => setIsDeleting(false)}
             onConfirm={() => {
               props.cancelInterview(props.id);
-              console.log("DELETE");
               setIsDeleting(false);
             }}
           />
